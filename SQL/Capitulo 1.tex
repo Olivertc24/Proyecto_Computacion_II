@@ -1,0 +1,277 @@
+\documentclass[12pt, a4paper]{article}
+
+% --- PAQUETES ESENCIALES ---
+
+% Codificación y fuentes
+\usepackage[utf8]{inputenc} % Codificación de entrada UTF-8
+\usepackage[T1]{fontenc}    % Codificación de fuentes
+
+% Idioma (Español)
+\usepackage[spanish]{babel} % Soporte para español, tildes, etc.
+\addto\captionsspanish{\renewcommand{\contentsname}{Tabla de Contenido}} % Renombrar 'Índice'
+
+% Geometría y espaciado
+\usepackage{geometry}
+\geometry{a4paper, left=2.5cm, right=2.5cm, top=3cm, bottom=3cm} % Márgenes
+\usepackage{parskip} % Espacio entre párrafos en lugar de sangría
+
+% Gráficos y colores
+\usepackage{graphicx}     % Para incluir imágenes
+\usepackage{xcolor}       % Para definir colores
+
+% --- CONFIGURACIÓN PARA CÓDIGO SQL (Listings) ---
+% Este paquete es crucial para mostrar código
+\usepackage{listings}
+
+% Definir los colores para el resaltado de SQL
+\definecolor{codegreen}{rgb}{0,0.6,0}      % Comentarios
+\definecolor{codeblue}{rgb}{0,0,0.6}       % Palabras clave (Keywords)
+\definecolor{codepurple}{rgb}{0.58,0,0.82}  % Strings (Cadenas)
+\definecolor{backcolour}{rgb}{0.98,0.98,0.98} % Color de fondo del bloque de código
+
+% Definir el estilo personalizado para SQL
+\lstdefinestyle{sqlstyle}{
+    language=SQL,                         % Lenguaje SQL
+    backgroundcolor=\color{backcolour},   % Fondo
+    commentstyle=\color{codegreen},       % Estilo de comentarios
+    keywordstyle=\color{codeblue},        % Estilo de palabras clave
+    stringstyle=\color{codepurple},       % Estilo de strings
+    basicstyle=\ttfamily\footnotesize,    % Fuente monoespaciada pequeña
+    breakatwhitespace=false,              % No romper líneas solo en espacios
+    breaklines=true,                      % Romper líneas largas
+    captionpos=b,                         % Posición del caption (abajo)
+    keepspaces=true,                      % Mantener espacios
+    numbers=left,                         % Números de línea a la izquierda
+    numbersep=5pt,                        % Separación de números
+    numberstyle=\tiny\color{gray},        % Estilo de números de línea
+    showspaces=false,                     % No mostrar espacios
+    showstringspaces=false,               % No mostrar espacios en strings
+    showtabs=false,                       % No mostrar tabs
+    tabsize=2                             % Tamaño del tab
+}
+
+% Establecer el estilo 'sqlstyle' como predeterminado
+\lstset{style=sqlstyle}
+
+
+% --- METADATOS DEL DOCUMENTO ---
+\title{Guía de Estudio: \huge \textbf{Bases de Datos Relacionales y SQL}}
+\author{Prof. Oliver} % Eres el autor de tu material
+\date{\today}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % --- INICIO DEL DOCUMENTO ---
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle % Crea la portada
+
+\tableofcontents % Crea la tabla de contenido automáticamente
+
+\newpage
+
+% --- CAPÍTULO 1: CONCEPTOS FUNDAMENTALES ---
+\section{Conceptos Fundamentales de Bases de Datos}
+
+\subsection{¿Qué es una Base de Datos?}
+Una base de datos (BD) es una colección organizada de información o datos estructurados, que normalmente se almacena electrónicamente en un sistema informático. Está diseñada para ser gestionada, actualizada y consultada de manera eficiente.
+
+\subsection{Sistemas Gestores de Bases de Datos (SGBD)}
+Un SGBD (en inglés, \textit{Database Management System} o \textbf{DBMS}) es el software que actúa como intermediario entre el usuario y la base de datos. Permite a los usuarios crear, leer, actualizar y eliminar datos (operaciones \textbf{CRUD}).
+
+Ejemplos populares de SGBD Relacionales (RDBMS):
+\begin{itemize}
+    \item MySQL
+    \item PostgreSQL
+    \item Microsoft SQL Server
+    \item Oracle Database
+    \item SQLite (usado en móviles y aplicaciones pequeñas)
+\end{itemize}
+
+\subsection{El Modelo Relacional}
+Propuesto por Edgar F. Codd en 1970, el modelo relacional organiza los datos en tablas (o "relaciones"). Este es el modelo que estudiaremos y sobre el que opera SQL.
+\begin{itemize}
+    \item \textbf{Tabla (Relación):} Una colección de datos sobre una entidad específica (ej. "Estudiantes", "Cursos").
+    \item \textbf{Fila (Tupla):} Representa un registro único dentro de una tabla (ej. el estudiante "Juan Pérez").
+    \item \textbf{Columna (Atributo):} Define una propiedad específica de la entidad (ej. "Nombre", "Fecha\_Nacimiento").
+\end{itemize}
+
+% [attachment_0](attachment) % (Descomenta si quieres añadir un gráfico)
+
+
+\subsection{Claves (Keys) en el Modelo Relacional}
+Las claves son fundamentales para garantizar la integridad y conectar las tablas.
+
+\subsubsection{Clave Primaria (Primary Key)}
+Es una columna (o conjunto de columnas) que identifica de forma \textbf{única} cada fila de una tabla.
+\begin{itemize}
+    \item No puede contener valores NULOS.
+    \item No puede tener valores duplicados.
+    \item Ejemplo: \texttt{ID\_Estudiante} en la tabla \texttt{Estudiantes}.
+\end{itemize}
+
+\subsubsection{Clave Foránea (Foreign Key)}
+Es una columna en una tabla que hace referencia a la Clave Primaria de otra tabla. Es el mecanismo que \textbf{crea la relación} entre tablas.
+\begin{itemize}
+    \item Ejemplo: Si tenemos una tabla \texttt{Inscripciones}, esta tendría una columna \texttt{ID\_Estudiante} (que es Clave Foránea) apuntando a la tabla \texttt{Estudiantes}.
+\end{itemize}
+
+
+% --- CAPÍTULO 2: LENGUAJE SQL ---
+\section{El Lenguaje SQL (Structured Query Language)}
+
+\subsection{¿Qué es SQL?}
+SQL (pronunciado "ese-cu-ele" o "sequel") es el lenguaje estándar utilizado para comunicarse con las bases de datos relacionales. Permite realizar todas las tareas de gestión de datos.
+
+\subsection{Subconjuntos de SQL}
+El lenguaje se divide conceptualmente en varias categorías:
+
+\begin{description}
+    \item[DDL (Data Definition Language)]
+    Lenguaje de Definición de Datos. Se usa para crear y modificar la estructura de la base de datos.
+    \begin{itemize}
+        \item \texttt{CREATE}: Crea objetos (ej. \texttt{CREATE TABLE...})
+        \item \texttt{ALTER}: Modifica la estructura (ej. \texttt{ALTER TABLE... ADD COLUMN...})
+        \item \texttt{DROP}: Elimina objetos (ej. \texttt{DROP TABLE...})
+    \end{itemize}
+    
+    \item[DML (Data Manipulation Language)]
+    Lenguaje de Manipulación de Datos. Es el más usado; se utiliza para consultar y modificar los datos.
+    \begin{itemize}
+        \item \texttt{SELECT}: El comando principal para consultar datos.
+        \item \texttt{INSERT}: Añade nuevas filas a una tabla.
+        \item \texttt{UPDATE}: Modifica filas existentes.
+        \item \texttt{DELETE}: Elimina filas.
+    \end{itemize}
+    
+    \item[DCL (Data Control Language)]
+    Lenguaje de Control de Datos. Gestiona los permisos y la seguridad.
+    \begin{itemize}
+        \item \texttt{GRANT}: Otorga permisos a un usuario.
+        \item \texttt{REVOKE}: Revoca permisos.
+    \end{itemize}
+\end{description}
+
+
+% --- CAPÍTULO 3: ESTRUCTURA BÁSICA DE DATOS (DDL) ---
+\section{Definición de Datos (DDL)}
+\subsection{Tipos de Datos Comunes}
+Antes de crear tablas, debemos conocer los tipos de datos:
+\begin{itemize}
+    \item \texttt{INT} o \texttt{INTEGER}: Números enteros.
+    \item \texttt{VARCHAR(n)}: Texto de longitud variable (hasta 'n' caracteres).
+    \item \texttt{CHAR(n)}: Texto de longitud fija.
+    \item \texttt{DECIMAL(p, s)}: Números decimales con precisión 'p' y escala 's'.
+    \item \texttt{DATE}: Fechas (ej. '2025-11-08').
+    \item \texttt{TIMESTAMP}: Fecha y hora.
+    \item \texttt{BOOLEAN}: Verdadero o Falso.
+\end{itemize}
+
+\subsection{Creación de Tablas (CREATE TABLE)}
+Usamos \texttt{CREATE TABLE} para definir una nueva tabla, sus columnas y sus tipos de datos.
+
+\begin{lstlisting}[caption=Ejemplo de creación de dos tablas relacionadas.]
+-- Creación de la tabla de Estudiantes
+CREATE TABLE Estudiantes (
+    ID_Estudiante INT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Fecha_Nacimiento DATE
+);
+
+-- Creación de la tabla de Cursos
+CREATE TABLE Cursos (
+    ID_Curso INT PRIMARY KEY,
+    Nombre_Curso VARCHAR(150) NOT NULL,
+    Creditos INT
+);
+
+-- Creación de una tabla de unión (Inscripciones)
+CREATE TABLE Inscripciones (
+    ID_Inscripcion INT PRIMARY KEY,
+    ID_Estudiante INT,
+    ID_Curso INT,
+    Semestre VARCHAR(20),
+    
+    -- Definición de las Claves Foráneas
+    FOREIGN KEY (ID_Estudiante) REFERENCES Estudiantes(ID_Estudiante),
+    FOREIGN KEY (ID_Curso) REFERENCES Cursos(ID_Curso)
+);
+\end{lstlisting}
+
+\subsection{Modificación de Tablas (ALTER TABLE)}
+% ... (Contenido a desarrollar por Oliver) ...
+
+\subsection{Eliminación de Tablas (DROP TABLE)}
+% ... (Contenido a desarrollar por Oliver) ...
+
+
+% --- CAPÍTULO 4: CONSULTAS BÁSICAS (DML) ---
+\section{Consultas Básicas (DML - SELECT)}
+
+\subsection{La Cláusula SELECT / FROM}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar SELECT *, SELECT Columna1, Columna2 FROM Tabla...
+
+\subsection{Filtrado de Datos (WHERE)}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar operadores: =, <>, >, <, >=, <=
+% Explicar operadores lógicos: AND, OR, NOT
+% Explicar: IN, BETWEEN, LIKE, IS NULL
+
+\subsection{Ordenamiento de Resultados (ORDER BY)}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar ASC (default) y DESC
+
+\subsection{Limitación de Resultados (LIMIT / TOP)}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar que varía según el SGBD (LIMIT en MySQL/PostgreSQL, TOP en SQL Server)
+
+
+% --- CAPÍTULO 5: MANIPULACIÓN DE DATOS (DML) ---
+\section{Manipulación de Datos (INSERT, UPDATE, DELETE)}
+\subsection{INSERT INTO}
+% ... (Contenido a desarrollar por Oliver) ...
+
+\subsection{UPDATE}
+% ... (Contenido a desarrollar por Oliver) ...
+% ¡Mencionar la importancia crucial de usar WHERE en un UPDATE!
+
+\subsection{DELETE}
+% ... (Contenido a desarrollar por Oliver) ...
+% ¡Mencionar la importancia crucial de usar WHERE en un DELETE!
+
+
+% --- CAPÍTULO 6: TEMAS AVANZADOS ---
+\section{Consultas Avanzadas y JOINs}
+
+\subsection{Funciones de Agregación}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar: COUNT(), SUM(), AVG(), MIN(), MAX()
+
+\subsection{Agrupamiento de Datos (GROUP BY)}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar cómo funciona con las funciones de agregación
+
+\subsection{Filtrado de Grupos (HAVING)}
+% ... (Contenido a desarrollar por Oliver) ...
+% Diferencia clave entre WHERE (filtra filas) y HAVING (filtra grupos)
+
+\subsection{Unión de Tablas (JOINs)}
+%  % (Recomendado añadir un diagrama de Venn aquí)
+% ... (Contenido a desarrollar por Oliver) ...
+\subsubsection{INNER JOIN}
+\subsubsection{LEFT (OUTER) JOIN}
+\subsubsection{RIGHT (OUTER) JOIN}
+\subsubsection{FULL (OUTER) JOIN}
+
+\subsection{Subconsultas (Subqueries)}
+% ... (Contenido a desarrollar por Oliver) ...
+% Explicar subconsultas en el SELECT, FROM y WHERE.
+
+\end{document}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % --- FIN DEL DOCUMENTO ---
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
